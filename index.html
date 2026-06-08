@@ -43,15 +43,23 @@
     background:var(--surface);font-size:17px;cursor:pointer;display:grid;place-items:center;color:var(--ink)}
   .icon-btn:active{transform:scale(.94)}
 
-  /* action chips */
-  .actions{display:flex;gap:8px;padding:12px 0 4px;overflow-x:auto;scrollbar-width:none}
-  .actions::-webkit-scrollbar{display:none}
-  .chip{flex:none;border:none;border-radius:999px;padding:10px 15px;font-size:13.5px;font-weight:600;
-    cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit}
+  /* action chips — 가로스크롤 없이 한 줄 꽉 차게 */
+  .actions{display:flex;gap:6px;padding:12px 0 4px}
+  .chip{flex:1;border:none;border-radius:14px;padding:11px 3px;font-size:12px;font-weight:600;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;font-family:inherit;white-space:nowrap}
   .chip:active{transform:scale(.96)}
   .chip.p{background:var(--primary);color:#fff;box-shadow:var(--shadow-sm)}
   .chip.a{background:var(--accent);color:#fff}
   .chip.g{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+  .menu-wrap{position:relative;flex:1;display:flex}
+  .menu-wrap>.chip{flex:1}
+  .menu{position:absolute;top:calc(100% + 6px);left:0;min-width:188px;z-index:60;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;display:none}
+  .menu.show{display:block}
+  .menu button{display:block;width:100%;text-align:left;border:none;background:none;
+    padding:11px 12px;border-radius:10px;font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+  .menu button:active{background:var(--surface-2)}
+  .menu button small{display:block;font-weight:500;font-size:11.5px;color:var(--ink-soft);margin-top:2px}
 
   /* tabs */
   .tabs{display:flex;gap:6px;padding:10px 0 6px;overflow-x:auto;scrollbar-width:none}
@@ -197,11 +205,16 @@
 
 <div class="wrap">
   <div class="actions">
-    <button class="chip p" onclick="openAdd()">＋ 재료 추가</button>
-    <button class="chip a" onclick="openRecipe()">🍳 오늘 뭐먹지</button>
-    <button class="chip g" onclick="toggleSelectMode()">✅ 골라서 추천</button>
+    <button class="chip p" onclick="openAdd()">＋ 추가</button>
+    <div class="menu-wrap">
+      <button class="chip a" onclick="toggleMenu(event)">🍳 뭐먹지 ▾</button>
+      <div class="menu" id="recMenu">
+        <button onclick="pickRecipeAuto()">🤖 자동 추천<small>임박 재료 우선으로 알아서</small></button>
+        <button onclick="pickRecipeSelect()">✅ 직접 재료 선택<small>먹을 재료를 골라서</small></button>
+      </div>
+    </div>
     <button class="chip g" onclick="openShopping()">🛒 장보기</button>
-    <button class="chip g" onclick="openWaste()">🗑️ 버린 기록</button>
+    <button class="chip g" onclick="openWaste()">🗑️ 버림</button>
   </div>
 
   <div class="tabs" id="tabs"></div>
@@ -790,8 +803,16 @@ async function checkApi(){
 
 /* ============ 공통 ============ */
 function show(id){document.getElementById(id).classList.add("show");}
-function closeAll(){document.querySelectorAll(".ov").forEach(o=>o.classList.remove("show"));}
+function closeAll(){document.querySelectorAll(".ov").forEach(o=>o.classList.remove("show"));closeMenu();}
 document.querySelectorAll(".ov").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)closeAll();}));
+
+/* 뭐먹지 드롭다운 */
+function toggleMenu(e){e.stopPropagation();document.getElementById("recMenu").classList.toggle("show");}
+function closeMenu(){const m=document.getElementById("recMenu");if(m)m.classList.remove("show");}
+function pickRecipeAuto(){closeMenu();openRecipe();}
+function pickRecipeSelect(){closeMenu();toggleSelectMode();}
+document.addEventListener("click",e=>{const m=document.getElementById("recMenu");
+  if(m&&m.classList.contains("show")&&!e.target.closest(".menu-wrap"))closeMenu();});
 let tT;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");clearTimeout(tT);tT=setTimeout(()=>t.classList.remove("show"),1900);}
 
 /* ============ 시작 ============ */
