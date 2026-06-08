@@ -33,22 +33,40 @@ exports.handler = async (event) => {
 
   const ingredients = Array.isArray(body.ingredients) ? body.ingredients : [];
   const expiring = Array.isArray(body.expiring) ? body.expiring : [];
+  const mode = body.mode === "selected" ? "selected" : "all";
   if (!ingredients.length)
     return { statusCode: 400, headers, body: JSON.stringify({ error: "재료가 없습니다" }) };
 
   const sys =
-    "너는 한국 가정식 요리를 잘 아는 친절한 요리 도우미야. " +
+    "너는 한국 가정식 요리를 잘 아는 친절한 요리 선생님이야. " +
     "사용자의 냉장고 재료로 만들 수 있는 현실적인 집밥 레시피 3개를 추천해. " +
-    "유통기한이 임박한 재료를 최대한 먼저 소진하는 메뉴를 우선해. " +
-    "꼭 아래 JSON 형식 '그대로'만 출력하고, 다른 말/마크다운/코드블록은 절대 쓰지 마. " +
-    '{"recipes":[{"name":"메뉴명","reason":"왜 추천하는지 한 줄(임박 재료 언급)",' +
-    '"have":["집에 있는 재료"],"need":["추가로 사야 할 재료"],"steps":["조리 1","조리 2","조리 3"]}]}';
+    "각 레시피는 요리 초보도 그대로 따라 할 수 있도록 '아주 상세하게' 써. " +
+    "유통기한이 임박한 재료를 먼저 소진하는 메뉴를 앞쪽에 배치해. " +
+    "반드시 아래 JSON 형식 '그대로'만 출력하고, 마크다운/코드블록/다른 말은 절대 쓰지 마.\n" +
+    '{"recipes":[{' +
+    '"name":"메뉴명",' +
+    '"reason":"이 메뉴를 추천하는 이유 한 줄 (임박 재료를 쓴다면 언급)",' +
+    '"time":"예: 약 20분",' +
+    '"servings":"예: 2인분",' +
+    '"difficulty":"쉬움 / 보통 / 어려움 중 하나",' +
+    '"have":["집에 있는 재료와 분량, 예: 두부 1/2모","김치 1컵"],' +
+    '"need":["추가로 사야 할 재료와 분량, 예: 대파 1대"],' +
+    '"steps":["조리 단계를 5~7개로. 각 단계에 분량·불 세기·시간을 구체적으로 적어. 예: 중불에서 김치를 3~4분 볶는다"],' +
+    '"tip":"실패하지 않는 핵심 팁 한 줄"' +
+    "}]}";
+
+  const selLine =
+    mode === "selected"
+      ? "사용자가 직접 고른 재료들이야. 이 재료들을 가능한 한 많이 활용하는 메뉴로 추천해줘.\n"
+      : "";
 
   const user =
     `[냉장고에 있는 재료]\n${ingredients.join(", ")}\n\n` +
     `[유통기한 임박 재료(우선 소진)]\n${expiring.length ? expiring.join(", ") : "없음"}\n\n` +
-    `위 재료로 만들 수 있는 한국 가정식 3가지를 JSON으로만 추천해줘. ` +
-    `steps는 3~5단계로 간단히. have에는 위 재료 중 실제로 쓰는 것만 적어줘.`;
+    selLine +
+    `위 재료로 만들 수 있는 한국 가정식 3가지를 JSON으로만, 상세하게 추천해줘. ` +
+    `steps는 5~7단계로 분량·불 세기·시간을 넣어 구체적으로. ` +
+    `have에는 위 재료 중 실제로 쓰는 것만 분량과 함께 적어줘.`;
 
   try {
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -60,7 +78,8 @@ exports.handler = async (event) => {
           { role: "system", content: sys },
           { role: "user", content: user },
         ],
-        temperature: 0.6,
+        temperature: 0.7,
+        max_tokens: 1800,
         response_format: { type: "json_object" },
       }),
     });
