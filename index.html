@@ -68,25 +68,34 @@
   .sortbar{display:flex;justify-content:space-between;align-items:center;padding:6px 2px 10px;font-size:12.5px;color:var(--ink-soft)}
   .sortbar select{font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;background:var(--surface);color:var(--ink)}
 
-  /* card */
+  /* card — 박스형, 한 줄 2개 */
+  #list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
-    padding:13px;margin-bottom:10px;box-shadow:var(--shadow-sm);display:flex;gap:12px;position:relative;overflow:hidden}
-  .card .stripe{position:absolute;left:0;top:0;bottom:0;width:5px}
-  .thumb{width:62px;height:62px;border-radius:13px;flex:none;object-fit:cover;background:var(--surface-2);
-    display:grid;place-items:center;font-size:26px;color:#bdb6a4;border:1px solid var(--line)}
-  .c-body{flex:1;min-width:0}
-  .c-top{display:flex;align-items:flex-start;gap:8px}
-  .c-name{font-size:15.5px;font-weight:700;letter-spacing:-.01em;word-break:keep-all}
-  .badge{flex:none;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+    box-shadow:var(--shadow-sm);position:relative;overflow:hidden;display:flex;flex-direction:column}
+  .card.selected{outline:3px solid var(--primary);outline-offset:-1px}
+  .card .stripe{position:absolute;left:0;right:0;top:0;height:4px;z-index:2}
+  .thumb-wrap{position:relative}
+  .thumb{width:100%;height:92px;object-fit:cover;background:var(--surface-2);
+    display:grid;place-items:center;font-size:34px;color:#bdb6a4}
+  .badge-ov{position:absolute;top:8px;right:8px}
+  .badge-ov .badge{box-shadow:0 1px 4px rgba(0,0,0,.18)}
+  .sel-ov{position:absolute;top:8px;left:8px;width:24px;height:24px;border-radius:50%;
+    border:2px solid #fff;background:rgba(20,30,15,.35);display:none;place-items:center;
+    color:#fff;font-size:14px;font-weight:800;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+  .selectMode .sel-ov{display:grid}
+  .sel-ov.on{background:var(--primary)}
+  .c-body{flex:1;padding:9px 10px 10px}
+  .c-name{font-size:14.5px;font-weight:700;letter-spacing:-.01em;word-break:keep-all;line-height:1.3}
+  .badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
   .b-ok{background:#e7f3ea;color:var(--ok)} .b-warn{background:#fbf0d4;color:#a9760c}
   .b-danger{background:#f9e2de;color:var(--danger)} .b-staple{background:#e9eef6;color:#3d5a86}
-  .c-meta{font-size:12px;color:var(--ink-soft);margin-top:4px;display:flex;flex-wrap:wrap;gap:4px 10px}
-  .c-meta b{color:var(--ink);font-weight:600}
+  .c-meta{font-size:11.5px;color:var(--ink-soft);margin-top:4px;display:flex;flex-wrap:wrap;gap:3px 8px}
+  .c-meta b{color:var(--ink);font-weight:700}
   .c-tags{margin-top:6px;display:flex;gap:5px;flex-wrap:wrap}
-  .pill{font-size:11px;background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px 7px;color:var(--ink-soft)}
-  .c-act{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
-  .mini{font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--surface-2);
-    border-radius:8px;padding:5px 10px;cursor:pointer;font-family:inherit;color:var(--ink)}
+  .pill{font-size:10.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:2px 6px;color:var(--ink-soft)}
+  .c-act{display:flex;gap:5px;margin-top:9px}
+  .mini{flex:1;font-size:11.5px;font-weight:600;border:1px solid var(--line);background:var(--surface-2);
+    border-radius:8px;padding:6px 2px;cursor:pointer;font-family:inherit;color:var(--ink);text-align:center}
   .mini:active{transform:scale(.95)}
   .mini.warnfill{background:var(--accent-soft);border-color:#eccdb3;color:var(--accent)}
 
@@ -151,6 +160,27 @@
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
     padding:11px 18px;border-radius:999px;font-size:13px;z-index:99;opacity:0;transition:.25s;pointer-events:none}
   .toast.show{opacity:1;bottom:34px}
+
+  /* --- v2: 박스 그리드/선택/상세레시피 --- */
+  .empty{grid-column:1/-1}
+  .selbar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:560px;z-index:45;
+    display:none;gap:10px;padding:12px 14px calc(14px + env(safe-area-inset-bottom));
+    background:rgba(255,253,247,.97);backdrop-filter:blur(8px);border-top:1px solid var(--line);align-items:center}
+  .selbar.show{display:flex}
+  .selbar .chip{flex:1;justify-content:center;padding:13px}
+  .ghost-sm{border:1px solid var(--line);background:var(--surface);border-radius:999px;
+    padding:12px 18px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;color:var(--ink-soft);flex:none}
+  body.selecting{padding-bottom:96px}
+  .rec-meta{display:flex;gap:7px;flex-wrap:wrap;margin:2px 0 9px}
+  .rec-meta span{font-size:11.5px;font-weight:600;background:var(--surface);border:1px solid var(--line);
+    border-radius:8px;padding:3px 9px;color:var(--ink-soft)}
+  .rec .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}
+  .rec .chips .c{font-size:12px;border-radius:8px;padding:3px 9px;border:1px solid}
+  .rec .chips .c.h{background:#e7f3ea;border-color:#c4e2cc;color:#2c6b41}
+  .rec .chips .c.n{background:var(--accent-soft);border-color:#eccdb3;color:#9a4f1f}
+  .rec .tip{margin-top:10px;font-size:12.5px;background:#fff8e8;border:1px solid #f0e0b0;
+    color:#85610c;border-radius:10px;padding:9px 11px;line-height:1.5}
+  .rec ol li{margin-bottom:6px;line-height:1.55}
 </style>
 </head>
 <body>
@@ -169,6 +199,7 @@
   <div class="actions">
     <button class="chip p" onclick="openAdd()">＋ 재료 추가</button>
     <button class="chip a" onclick="openRecipe()">🍳 오늘 뭐먹지</button>
+    <button class="chip g" onclick="toggleSelectMode()">✅ 골라서 추천</button>
     <button class="chip g" onclick="openShopping()">🛒 장보기</button>
     <button class="chip g" onclick="openWaste()">🗑️ 버린 기록</button>
   </div>
@@ -176,7 +207,7 @@
   <div class="tabs" id="tabs"></div>
   <input class="search" id="search" placeholder="🔍 재료 이름 검색" oninput="render()">
   <div class="sortbar">
-    <span id="countTxt">—</span>
+    <select id="catFilter" onchange="render()"></select>
     <span>정렬
       <select id="sort" onchange="render()">
         <option value="expiry">유통기한 임박순</option>
@@ -185,8 +216,14 @@
       </select>
     </span>
   </div>
+  <div id="countTxt" style="font-size:11.5px;color:var(--ink-soft);padding:0 2px 8px">—</div>
 
   <div id="list"></div>
+</div>
+
+<div class="selbar" id="selbar">
+  <button class="ghost-sm" onclick="exitSelect()">취소</button>
+  <button class="chip a" onclick="recommendSelected()">🍳 <span id="selCount">0</span>개 재료로 레시피</button>
 </div>
 
 <!-- 재료 추가/수정 -->
@@ -241,7 +278,7 @@
 <!-- 레시피 -->
 <div class="ov" id="ovRecipe"><div class="sheet">
   <div class="grab"></div>
-  <h2>🍳 오늘 뭐먹지</h2>
+  <h2 id="recTtl">🍳 오늘 뭐먹지</h2>
   <div id="recBody"></div>
   <button class="ghost" onclick="closeAll()">닫기</button>
 </div></div>
@@ -370,7 +407,7 @@ function clearOf(store){
 }
 
 /* ============ 상태 ============ */
-const STATE={items:[],shop:[],waste:[],tab:"전체",photoData:null};
+const STATE={items:[],shop:[],waste:[],tab:"전체",photoData:null,selectMode:false,selected:new Set()};
 const todayStr=()=>new Date().toISOString().slice(0,10);
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 
@@ -416,10 +453,17 @@ function buildTabs(){
   ).join("");
 }
 
+function buildCatFilter(){
+  document.getElementById("catFilter").innerHTML =
+    `<option value="">전체 분류</option>`+CATS.map(c=>`<option>${c}</option>`).join("");
+}
+
 function render(){
   const q=v("search").trim();
+  const cat=v("catFilter");
   let list=STATE.items.slice();
   if(STATE.tab!=="전체") list=list.filter(i=>i.loc===STATE.tab);
+  if(cat) list=list.filter(i=>i.cat===cat);
   if(q) list=list.filter(i=>i.name.includes(q)||(i.memo||"").includes(q)||i.cat.includes(q));
   const sort=v("sort");
   list.sort((a,b)=>{
@@ -445,22 +489,53 @@ function cardHTML(i){
   else if(d<=2){badge=`<span class="badge b-danger">D-${d}</span>`;stripe="var(--danger)";}
   else if(d<=5){badge=`<span class="badge b-warn">D-${d}</span>`;stripe="var(--warn)";}
   else{badge=`<span class="badge b-ok">D-${d}</span>`;stripe="var(--ok)";}
+  const selected=STATE.selected.has(i.id);
   const thumb=i.photo?`<img class="thumb" src="${i.photo}">`:`<div class="thumb">${emojiFor(i.cat)}</div>`;
-  const stapleBtn=i.staple?`<button class="mini warnfill" onclick="restock('${i.id}')">🔄 보충(날짜갱신)</button>`:"";
-  return `<div class="card"><div class="stripe" style="background:${stripe}"></div>
-    ${thumb}
-    <div class="c-body">
-      <div class="c-top"><div class="c-name">${esc(i.name)}</div>${badge}</div>
-      <div class="c-meta"><span><b>${i.qty}</b>${i.unit}</span><span>📍${i.loc}</span>
-        <span>유통 ${i.staple?'—':i.expiry}</span></div>
-      ${i.memo?`<div class="c-tags"><span class="pill">📝 ${esc(i.memo)}</span></div>`:""}
-      <div class="c-act">
+  const stapleBtn=i.staple?`<button class="mini warnfill" onclick="restock('${i.id}')">🔄 보충</button>`:"";
+  const actions=STATE.selectMode?"":`<div class="c-act">
         ${stapleBtn}
         <button class="mini" onclick="openEdit('${i.id}')">수정</button>
-        <button class="mini" onclick="useItem('${i.id}')">다 씀</button>
-        <button class="mini" onclick="discardItem('${i.id}')">버림</button>
-      </div>
+        ${i.staple?"":`<button class="mini" onclick="useItem('${i.id}')">다 씀</button>
+        <button class="mini" onclick="discardItem('${i.id}')">버림</button>`}
+      </div>`;
+  return `<div class="card ${selected?'selected':''}" onclick="cardClick('${i.id}')">
+    <div class="stripe" style="background:${stripe}"></div>
+    <div class="thumb-wrap">
+      ${thumb}
+      <div class="badge-ov">${badge}</div>
+      <div class="sel-ov ${selected?'on':''}">${selected?'✓':''}</div>
+    </div>
+    <div class="c-body">
+      <div class="c-name">${esc(i.name)}</div>
+      <div class="c-meta"><span><b>${i.qty}</b>${i.unit}</span><span>📍${i.loc}</span></div>
+      <div class="c-meta">유통 ${i.staple?'—':i.expiry}</div>
+      ${i.memo?`<div class="c-tags"><span class="pill">📝 ${esc(i.memo)}</span></div>`:""}
+      ${actions}
     </div></div>`;
+}
+
+/* ============ 재료 골라서 추천 (선택 모드) ============ */
+function toggleSelectMode(){
+  STATE.selectMode=!STATE.selectMode;
+  STATE.selected.clear();
+  document.getElementById("selbar").classList.toggle("show",STATE.selectMode);
+  document.getElementById("list").classList.toggle("selectMode",STATE.selectMode);
+  document.body.classList.toggle("selecting",STATE.selectMode);
+  updateSelChip();render();
+  if(STATE.selectMode) toast("추천받을 재료를 탭해서 고르세요");
+}
+function exitSelect(){if(STATE.selectMode)toggleSelectMode();}
+function cardClick(id){
+  if(!STATE.selectMode)return;
+  if(STATE.selected.has(id))STATE.selected.delete(id);else STATE.selected.add(id);
+  updateSelChip();render();
+}
+function updateSelChip(){document.getElementById("selCount").textContent=STATE.selected.size;}
+function recommendSelected(){
+  if(!STATE.selected.size){toast("재료를 1개 이상 골라주세요");return;}
+  const names=STATE.items.filter(i=>STATE.selected.has(i.id)).map(i=>i.name);
+  exitSelect();
+  openRecipe(names);
 }
 function emojiFor(c){return {"채소":"🥬","과일":"🍎","육류":"🥩","해산물":"🐟","유제품":"🥛","달걀":"🥚","두부/콩":"🧈","반찬":"🥘","밀키트":"🍱","냉동식품":"🧊","소스/양념":"🧂","음료":"🧃","곡물/면":"🍚","빵/베이커리":"🍞"}[c]||"🍽️";}
 function esc(s){return (s||"").replace(/[<>&]/g,m=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[m]));}
@@ -557,40 +632,53 @@ function handlePhoto(e){
 }
 
 /* ============ 레시피 추천 ============ */
-async function openRecipe(){
+async function openRecipe(selectedNames){
   closeAll();show("ovRecipe");
   const body=document.getElementById("recBody");
-  const active=STATE.items.filter(i=>!i.staple);
-  const all=STATE.items.map(i=>i.name);
-  const expiring=STATE.items.filter(i=>{const d=dday(i);return d!==null&&d<=3;})
+  const useSel=Array.isArray(selectedNames)&&selectedNames.length>0;
+  const pool=useSel?STATE.items.filter(i=>selectedNames.includes(i.name)):STATE.items;
+  const all=useSel?selectedNames:STATE.items.map(i=>i.name);
+  const expiring=pool.filter(i=>{const d=dday(i);return d!==null&&d<=3;})
     .sort((a,b)=>dday(a)-dday(b)).map(i=>`${i.name}(D-${Math.max(dday(i),0)})`);
+  document.getElementById("recTtl").textContent=useSel?"🍳 선택한 재료로 추천":"🍳 오늘 뭐먹지";
   if(!all.length){body.innerHTML=`<div class="empty"><span class="em">🍳</span>재료를 먼저 등록해 주세요!</div>`;return;}
-  body.innerHTML=`<div class="loading"><div class="spin"></div>임박 재료 우선으로 메뉴 고르는 중…</div>`;
+  body.innerHTML=`<div class="loading"><div class="spin"></div>${useSel?'고른 재료로':'임박 재료 우선으로'} 상세 레시피 만드는 중…</div>`;
   try{
     const r=await fetch("/.netlify/functions/recommend",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ingredients:all,expiring})});
+      body:JSON.stringify({ingredients:all,expiring,mode:useSel?"selected":"all"})});
     if(!r.ok) throw new Error("fn");
     const data=await r.json();
     if(!data.recipes||!data.recipes.length) throw new Error("empty");
-    renderRecipes(data.recipes,expiring,false);
+    renderRecipes(data.recipes,expiring,false,useSel);
   }catch(err){
-    const local=localRecipes(all,expiring);
-    renderRecipes(local,expiring,true);
+    renderRecipes(localRecipes(all,expiring),expiring,true,useSel);
   }
 }
-function renderRecipes(recipes,expiring,isLocal){
+function renderRecipes(recipes,expiring,isLocal,useSel){
   const body=document.getElementById("recBody");
+  const nm=x=>esc(typeof x==='string'?x:(x&&x.name)||'');
   let head="";
-  if(expiring.length) head+=`<div class="noteline">⏰ 임박 재료 우선 추천: ${expiring.join(", ")}</div>`;
-  if(isLocal) head+=`<div class="noteline">ℹ️ AI 연결 전(또는 미배포)이라 내장 레시피로 추천했어요. Netlify에 올리고 키를 넣으면 더 똑똑해져요.</div>`;
-  body.innerHTML=head+recipes.map(rc=>`
-    <div class="rec">
+  if(useSel) head+=`<div class="noteline">✅ 고른 재료 위주로 추천했어요</div>`;
+  else if(expiring.length) head+=`<div class="noteline">⏰ 임박 재료 우선 추천: ${esc(expiring.join(", "))}</div>`;
+  if(isLocal) head+=`<div class="noteline">ℹ️ AI 연결 전(또는 미배포)이라 내장 레시피로 추천했어요. Netlify 배포 후 키를 넣으면 더 상세해져요.</div>`;
+  body.innerHTML=head+recipes.map(rc=>{
+    const meta=[];
+    if(rc.time)meta.push(`⏱ ${esc(rc.time)}`);
+    if(rc.servings)meta.push(`👥 ${esc(rc.servings)}`);
+    if(rc.difficulty)meta.push(`🔥 ${esc(rc.difficulty)}`);
+    const have=(rc.have||[]).map(x=>`<span class="c h">${nm(x)}</span>`).join("");
+    const need=(rc.need||[]).map(x=>`<span class="c n">${nm(x)}</span>`).join("");
+    const steps=(rc.steps||[]).map(s=>`<li>${esc(s)}</li>`).join("");
+    return `<div class="rec">
       <h3>${esc(rc.name)}</h3>
+      ${meta.length?`<div class="rec-meta">${meta.map(m=>`<span>${m}</span>`).join("")}</div>`:""}
       ${rc.reason?`<div class="why">👍 ${esc(rc.reason)}</div>`:""}
-      ${rc.have&&rc.have.length?`<div class="lbl have">집에 있는 재료</div><div>${rc.have.map(x=>`<b style="color:var(--ok)">${esc(x)}</b>`).join(" · ")}</div>`:""}
-      ${rc.need&&rc.need.length?`<div class="lbl need">사야 할 재료</div><div>${rc.need.map(x=>`<b style="color:var(--accent)">${esc(x)}</b>`).join(" · ")}</div>`:""}
-      ${rc.steps&&rc.steps.length?`<div class="lbl">만드는 법</div><ol>${rc.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>`:""}
-    </div>`).join("");
+      ${have?`<div class="lbl">집에 있는 재료</div><div class="chips">${have}</div>`:""}
+      ${need?`<div class="lbl">사야 할 재료</div><div class="chips">${need}</div>`:""}
+      ${steps?`<div class="lbl">만드는 법</div><ol>${steps}</ol>`:""}
+      ${rc.tip?`<div class="tip">💡 ${esc(rc.tip)}</div>`:""}
+    </div>`;
+  }).join("");
 }
 // 내장 레시피 DB (오프라인/미배포 대체)
 const RDB=[
@@ -709,6 +797,7 @@ let tT;function toast(m){const t=document.getElementById("toast");t.textContent=
 /* ============ 시작 ============ */
 (async function(){
   fillCatLoc();
+  buildCatFilter();
   await openDB();
   STATE.items=await allOf("items");STATE.shop=await allOf("shop");STATE.waste=await allOf("waste");
   buildTabs();render();
