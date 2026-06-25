@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>냉장고 살림노트</title>
+<title>유니스냉장고</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2f5d3f">
+<link rel="icon" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="유니스냉장고">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
@@ -196,7 +204,7 @@
 <header>
   <div class="head-in">
     <div class="logo">🥬</div>
-    <div class="ttl">냉장고 살림노트<small>냉파부터 레시피 추천까지</small></div>
+    <div class="ttl">유니스냉장고<small>냉파부터 레시피 추천까지</small></div>
     <div class="head-tools">
       <button class="icon-btn" onclick="openBackup()" title="백업/복원">⚙️</button>
     </div>
@@ -821,6 +829,11 @@ let tT;function toast(m){const t=document.getElementById("toast");t.textContent=
   STATE.items=await allOf("items");STATE.shop=await allOf("shop");STATE.waste=await allOf("waste");
   buildTabs();render();
 })();
+
+/* PWA 서비스워커 등록 */
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{});});
+}
 </script>
 </body>
 </html>
